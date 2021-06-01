@@ -1,0 +1,50 @@
+<html>
+<head>
+<script>
+function showCD(str) {
+  if (str=="") {
+    document.getElementById("txtHint").innerHTML="";
+    return;
+  }
+  var xhr = new XMLHttpRequest();
+
+  xhr.open('post','XmlInjection.php',true);
+      
+  // 不同於 get，post 在傳送前要先設定傳送資料的格式，我要傳過去的是 JSON 格式
+  xhr.setRequestHeader('Content-Type', 'text/xml');
+
+  // const data = toXML({x : 10});
+  const data = "<userinfo><name>Jason<name></userinfo>"
+      
+      // 接著傳送過去
+  xhr.send(data);
+      
+  // 等待資料確定傳送過去時觸發 onload function
+  xhr.onload = function(){
+      // alert(xhr.responseText);
+      print_r(xhr.responseText);
+  }
+
+  xhr.onreadystatechange = function() { // listen for state changes
+  if (xhr.readyState == 4 && xhr.status == 200) { // when completed we can move away
+    window.location = "XmlInjection.php";
+  }
+}
+}
+</script>
+</head>
+<body>
+
+<form action="XmlInjection.php" method="POST" enctype="text/xml">
+Select a CD:
+<select name="cds" onchange="showCD(this.value)" type="submit">
+  <option value="">Select a CD:</option>
+  <option value="Bob Dylan">Bob Dylan</option>
+  <option value="Bee Gees">Bee Gees</option>
+  <option value="Cat Stevens">Cat Stevens</option>
+</select>
+</form>
+<div id="txtHint"><b>CD info will be listed here...</b></div>
+
+</body>
+</html>
